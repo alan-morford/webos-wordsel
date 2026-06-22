@@ -1,0 +1,366 @@
+/*
+ * styles.css -- Wordle styling for legacy webOS WebKit.
+ *
+ * No CSS custom properties (var()) -- colors are hardcoded from the original
+ * palette. Layout uses the old -webkit-box flexbox model, which the webOS
+ * browser (Pre / TouchPad) supports. Sized to work on both phone (320x480)
+ * and tablet (1024x768) via a couple of width-based media queries.
+ */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  color: #1a1a1b;
+  font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.wb-app {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- header ---- */
+.wb-header {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #d3d6da;
+  -webkit-box-flex: 0;
+}
+.wb-stats-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  margin-top: -14px;
+  height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #d3d6da;
+  color: #1a1a1b;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.wb-title {
+  margin: 4px 0;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* ---- message / toast ---- */
+.wb-message {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  margin-left: -100px;
+  width: 200px;
+  text-align: center;
+  background-color: #1a1a1b;
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 10px 0;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 10;
+}
+.wb-message-show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---- board ---- */
+.wb-board {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-pack: center;
+  -webkit-box-flex: 1;
+  padding: 8px 0;
+}
+.wb-row {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+}
+.wb-tile {
+  /* A single character centers most reliably on old WebKit with plain
+     text-align + line-height (a -webkit-box here mis-aligned the letter). */
+  width: 52px;
+  height: 52px;
+  margin: 3px;
+  border: 2px solid #d3d6da;
+  box-sizing: border-box;
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1a1a1b;
+  text-align: center;
+  line-height: 48px;   /* 52px - 2px*2 borders (border-box) for vertical center */
+}
+.wb-tile.wb-filled {
+  border-color: #878a8c;
+}
+.wb-tile.wb-correct {
+  background-color: #6aaa64;
+  border-color: #6aaa64;
+  color: #ffffff;
+}
+.wb-tile.wb-present {
+  background-color: #c9b458;
+  border-color: #c9b458;
+  color: #ffffff;
+}
+.wb-tile.wb-absent {
+  background-color: #787c7e;
+  border-color: #787c7e;
+  color: #ffffff;
+}
+
+/* ---- keyboard ---- */
+.wb-keyboard {
+  width: 100%;
+  max-width: 500px;
+  padding: 6px 4px;
+  box-sizing: border-box;
+  -webkit-box-flex: 0;
+}
+.wb-kbrow {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  margin-bottom: 6px;
+}
+.wb-key {
+  -webkit-box-flex: 1;
+  height: 52px;
+  min-width: 29px;
+  margin: 0 2px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #d3d6da;
+  color: #1a1a1b;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-user-select: none;
+}
+.wb-key-wide {
+  -webkit-box-flex: 1.5;
+  font-size: 11px;
+}
+.wb-key-correct { background-color: #6aaa64; color: #ffffff; }
+.wb-key-present { background-color: #c9b458; color: #ffffff; }
+.wb-key-absent  { background-color: #787c7e; color: #ffffff; }
+
+/* ---- tablet (TouchPad and up): larger tiles/keys ---- */
+@media (min-width: 768px) {
+  .wb-title { font-size: 36px; margin: 8px 0; }
+  .wb-tile {
+    width: 62px;
+    height: 62px;
+    line-height: 58px;   /* 62px - 2px*2 borders */
+    font-size: 34px;
+    margin: 4px;
+  }
+  .wb-key { height: 64px; font-size: 18px; }
+  .wb-key-wide { font-size: 14px; }
+}
+
+/* ===================================================================== */
+/* Animations                                                            */
+/* ===================================================================== */
+
+/* Letter-entry pop */
+@-webkit-keyframes wb-pop {
+  0%   { -webkit-transform: scale(1); }
+  50%  { -webkit-transform: scale(1.1); }
+  100% { -webkit-transform: scale(1); }
+}
+@keyframes wb-pop {
+  0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); }
+}
+.wb-tile.wb-pop {
+  -webkit-animation: wb-pop 100ms ease-in-out;
+  animation: wb-pop 100ms ease-in-out;
+}
+
+/* Invalid-guess shake (applied to the row) */
+@-webkit-keyframes wb-shake {
+  0%, 100% { -webkit-transform: translateX(0); }
+  20% { -webkit-transform: translateX(-6px); }
+  40% { -webkit-transform: translateX(6px); }
+  60% { -webkit-transform: translateX(-6px); }
+  80% { -webkit-transform: translateX(6px); }
+}
+@keyframes wb-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); } 40% { transform: translateX(6px); }
+  60% { transform: translateX(-6px); } 80% { transform: translateX(6px); }
+}
+.wb-row.wb-shake {
+  -webkit-animation: wb-shake 600ms;
+  animation: wb-shake 600ms;
+}
+
+/* Win bounce (applied per tile, staggered via inline animation-delay) */
+@-webkit-keyframes wb-bounce {
+  0% { -webkit-transform: translateY(0); }
+  30% { -webkit-transform: translateY(-20px); }
+  50% { -webkit-transform: translateY(4px); }
+  70% { -webkit-transform: translateY(-8px); }
+  100% { -webkit-transform: translateY(0); }
+}
+@keyframes wb-bounce {
+  0% { transform: translateY(0); } 30% { transform: translateY(-20px); }
+  50% { transform: translateY(4px); } 70% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+.wb-tile.wb-bounce {
+  -webkit-animation: wb-bounce 700ms ease;
+  animation: wb-bounce 700ms ease;
+}
+
+/* Flip-reveal: one keyframe set per result so the tile rotates edge-on at the
+   midpoint and the result color appears as it rotates back. 500ms total to
+   match FLIP_DURATION in ui.js. Falls back to an instant color change (from
+   the wb-correct/present/absent class) where animations aren't supported. */
+@-webkit-keyframes wb-flip-correct {
+  0%   { -webkit-transform: rotateX(0deg);  background-color: #ffffff; border-color: #878a8c; color: #1a1a1b; }
+  49%  { background-color: #ffffff; border-color: #878a8c; color: #1a1a1b; }
+  50%  { -webkit-transform: rotateX(90deg); background-color: #6aaa64; border-color: #6aaa64; color: #ffffff; }
+  100% { -webkit-transform: rotateX(0deg);  background-color: #6aaa64; border-color: #6aaa64; color: #ffffff; }
+}
+@-webkit-keyframes wb-flip-present {
+  0%   { -webkit-transform: rotateX(0deg);  background-color: #ffffff; border-color: #878a8c; color: #1a1a1b; }
+  49%  { background-color: #ffffff; border-color: #878a8c; color: #1a1a1b; }
+  50%  { -webkit-transform: rotateX(90deg); background-color: #c9b458; border-color: #c9b458; color: #ffffff; }
+  100% { -webkit-transform: rotateX(0deg);  background-color: #c9b458; border-color: #c9b458; color: #ffffff; }
+}
+@-webkit-keyframes wb-flip-absent {
+  0%   { -webkit-transform: rotateX(0deg);  background-color: #ffffff; border-color: #878a8c; color: #1a1a1b; }
+  49%  { background-color: #ffffff; border-color: #878a8c; color: #1a1a1b; }
+  50%  { -webkit-transform: rotateX(90deg); background-color: #787c7e; border-color: #787c7e; color: #ffffff; }
+  100% { -webkit-transform: rotateX(0deg);  background-color: #787c7e; border-color: #787c7e; color: #ffffff; }
+}
+.wb-tile.wb-flip.wb-correct {
+  -webkit-animation: wb-flip-correct 500ms ease forwards;
+  animation: wb-flip-correct 500ms ease forwards;
+}
+.wb-tile.wb-flip.wb-present {
+  -webkit-animation: wb-flip-present 500ms ease forwards;
+  animation: wb-flip-present 500ms ease forwards;
+}
+.wb-tile.wb-flip.wb-absent {
+  -webkit-animation: wb-flip-absent 500ms ease forwards;
+  animation: wb-flip-absent 500ms ease forwards;
+}
+
+/* ===================================================================== */
+/* Statistics modal                                                      */
+/* ===================================================================== */
+
+.wb-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  -webkit-box-orient: horizontal;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
+  z-index: 100;
+}
+.wb-modal-overlay.wb-modal-show {
+  display: -webkit-box;
+}
+.wb-modal {
+  width: 90%;
+  max-width: 360px;
+  box-sizing: border-box;
+  padding: 16px 20px 20px;
+  background-color: #ffffff;
+  color: #1a1a1b;
+  border-radius: 8px;
+  border: 1px solid #d3d6da;
+}
+.wb-modal-title {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.wb-stats {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  margin-bottom: 14px;
+}
+.wb-stat {
+  -webkit-box-flex: 1;
+  text-align: center;
+}
+.wb-stat-num {
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+}
+.wb-stat-label {
+  font-size: 10px;
+  margin-top: 4px;
+}
+.wb-dist-title {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 1px;
+}
+.wb-dist-row {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: center;
+  margin-bottom: 4px;
+}
+.wb-dist-label {
+  width: 16px;
+  margin-right: 4px;
+  font-weight: 400;
+  text-align: center;
+}
+.wb-dist-track {
+  -webkit-box-flex: 1;
+}
+.wb-dist-bar {
+  background-color: #787c7e;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  text-align: right;
+  padding: 2px 8px;
+  box-sizing: border-box;
+  min-width: 24px;
+}
+.wb-dist-bar.wb-dist-current {
+  background-color: #6aaa64;
+}
+.wb-modal-close {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 4px;
+  background-color: #6aaa64;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}

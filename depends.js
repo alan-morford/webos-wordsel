@@ -1,0 +1,9 @@
+enyo.depends(
+	"source/words.js",
+	"source/game.js",
+	"source/storage.js",
+	"source/stats.js",
+	"source/ui.js",
+	"source/App.js",
+	"source/styles.css"
+);

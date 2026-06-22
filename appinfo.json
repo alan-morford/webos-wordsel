@@ -1,0 +1,11 @@
+{
+	"id": "com.codepoet.wordsel",
+	"version": "1.0.0",
+	"vendor": "codepoet",
+	"type": "web",
+	"main": "index.html",
+	"title": "Wordsel",
+	"icon": "icon.png",
+	"splashIcon": "icon-256.png",
+	"uiRevision": 2
+}
