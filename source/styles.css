@@ -323,20 +323,25 @@ html, body {
   font-size: 13px;
   letter-spacing: 1px;
 }
+/* NOTE: do NOT use -webkit-box here. box-flex:1 does not grow a child to fill
+   on webOS WebKit (see CLAUDE.md), so the track would collapse to its content
+   width and the bar's percentage width would have nothing to resolve against.
+   A plain block-level track fills the row width, so the % bars are meaningful. */
 .wb-dist-row {
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-align: center;
+  position: relative;
   margin-bottom: 4px;
+  min-height: 20px;
 }
 .wb-dist-label {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 16px;
-  margin-right: 4px;
   font-weight: 400;
   text-align: center;
 }
 .wb-dist-track {
-  -webkit-box-flex: 1;
+  margin-left: 20px;   /* clear the absolutely-positioned label */
 }
 .wb-dist-bar {
   background-color: #787c7e;
