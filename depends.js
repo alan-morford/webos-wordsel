@@ -4,6 +4,7 @@ enyo.depends(
 	"source/storage.js",
 	"source/stats.js",
 	"source/ui.js",
+	"source/Updater-Helper.js",
 	"source/App.js",
 	"source/styles.css"
 );

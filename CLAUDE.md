@@ -19,7 +19,8 @@ source/game.js    -> WordleGame: solutionForDate, isValidWord, evaluateGuess, ag
 source/storage.js -> Storage: generic JSON get/set/remove + game save/load/clear (localStorage -> cookie)
 source/stats.js   -> WordleStats: record/load, streak + guess-distribution logic
 source/ui.js      -> WordleUI.mount(node): all DOM UI (board, keyboard, animations, toast, stats modal)
-source/App.js     -> Enyo 1.0 kind; rendered() calls WordleUI.mount(this.hasNode())
+source/Updater-Helper.js -> Helpers.Updater Enyo kind: App Museum II update check + Preware install (synced from webos-common; don't hand-edit)
+source/App.js     -> Enyo 1.0 kind; create() runs Updater.CheckForUpdate("Wordsel"); rendered() calls WordleUI.mount(this.hasNode())
 source/styles.css -> hardcoded-color CSS, -webkit-box layout, animation keyframes, modal
 ```
 
